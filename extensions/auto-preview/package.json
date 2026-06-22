@@ -1,0 +1,73 @@
+{
+    "package_version": 2,
+    "name": "auto-preview",
+    "version": "1.0.0",
+    "author": "HongHuang",
+    "editor": ">=3.8.6",
+    "description": "i18n:auto-preview.description",
+    "main": "./dist/main.js",
+    "scripts": {
+        "build": "tsc",
+        "watch": "tsc -w",
+        "reload": "curl -s -X POST http://localhost:7458/api/reload-extension -H 'Content-Type: application/json' -d '{\"name\":\"auto-preview\"}'",
+        "dev": "tsc && curl -s -X POST http://localhost:7458/api/reload-extension -H 'Content-Type: application/json' -d '{\"name\":\"auto-preview\"}'"
+    },
+    "devDependencies": {
+        "@cocos/creator-types": "^3.8.6",
+        "@types/node": "^18.17.1",
+        "typescript": "^5.8.2"
+    },
+    "contributions": {
+        "menu": [
+            {
+                "path": "i18n:menu.extension/Auto Preview",
+                "label": "i18n:auto-preview.menu_start",
+                "message": "start-preview"
+            },
+            {
+                "path": "i18n:menu.extension/Auto Preview",
+                "label": "i18n:auto-preview.menu_stop",
+                "message": "stop-preview"
+            },
+            {
+                "path": "i18n:menu.extension/Auto Preview",
+                "label": "i18n:auto-preview.menu_refresh",
+                "message": "refresh-preview"
+            }
+        ],
+        "shortcuts": [
+            {
+                "message": "start-preview",
+                "win": "ctrl+shift+p",
+                "mac": "cmd+shift+p"
+            },
+            {
+                "message": "stop-preview",
+                "win": "ctrl+shift+o",
+                "mac": "cmd+shift+o"
+            },
+            {
+                "message": "refresh-preview",
+                "win": "ctrl+shift+r",
+                "mac": "cmd+shift+r"
+            }
+        ],
+        "messages": {
+            "start-preview": {
+                "methods": ["startPreview"]
+            },
+            "stop-preview": {
+                "methods": ["stopPreview"]
+            },
+            "refresh-preview": {
+                "methods": ["refreshPreview"]
+            },
+            "open-browser": {
+                "methods": ["openBrowser"]
+            },
+            "scene-saved": {
+                "methods": ["onSceneSaved"]
+            }
+        }
+    }
+}
