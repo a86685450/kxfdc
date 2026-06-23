@@ -6,21 +6,11 @@ body, canvas, div {
   display: block;
   outline: none;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-
   user-select: none;
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
   -khtml-user-select: none;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-}
-
-/* Remove spin of input type number */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-    /* display: none; <- Crashes Chrome on hover */
-    -webkit-appearance: none;
-    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
 }
 
 body {
@@ -32,16 +22,14 @@ body {
   padding: 0;
   border: 0;
   margin: 0;
-
   cursor: default;
-  color: #888;
-  background-color: #333;
-
+  color: #f8fbff;
+  background-color: #192844;
   text-align: center;
   font-family: Helvetica, Verdana, Arial, sans-serif;
-
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 canvas {
@@ -51,6 +39,96 @@ canvas {
 #GameDiv, #Cocos3dGameContainer, #GameCanvas {
   width: 100%;
   height: 100%;
+}
+
+.game-loading {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  overflow: hidden;
+  background: #192844;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+
+.loading-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loading-bg {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(7, 19, 38, 0.22), rgba(5, 10, 24, 0.54)), url("assets/resources/native/c6/c63a817d-ace5-4af6-8d29-41fc21c1dcdd.png");
+  background-size: cover;
+  background-position: center;
+  filter: saturate(1.08);
+}
+
+.loading-panel {
+  position: absolute;
+  left: 50%;
+  bottom: 11%;
+  width: min(82vw, 460px);
+  transform: translateX(-50%);
+  padding: 28px 28px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 28px;
+  background: rgba(13, 31, 55, 0.66);
+  box-shadow: 0 18px 56px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(6px);
+}
+
+.loading-title {
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  text-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+}
+
+.loading-subtitle {
+  margin-top: 10px;
+  font-size: 18px;
+  color: #dff4ff;
+}
+
+.loading-bar {
+  position: relative;
+  height: 34px;
+  margin-top: 24px;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.72);
+  border-radius: 999px;
+  background: rgba(4, 19, 35, 0.68);
+}
+
+.loading-fill {
+  width: 0%;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #7ee8ff 0%, #ffdf67 52%, #ff9c55 100%);
+  box-shadow: 0 0 18px rgba(126, 232, 255, 0.7);
+  transition: width 0.18s ease;
+}
+
+.loading-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.72);
+}
+
+.loading-tip {
+  margin-top: 14px;
+  min-height: 22px;
+  font-size: 15px;
+  line-height: 22px;
+  color: #f7fbff;
 }
 
 :root {

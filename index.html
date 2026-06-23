@@ -3,62 +3,146 @@
 <head>
   <meta charset="utf-8">
 
-  <title>Cocos Creator | kxfdc</title>
+  <title>开心房地产</title>
 
-  <!--http://www.html5rocks.com/en/mobile/mobifying/-->
   <meta name="viewport"
         content="width=device-width,user-scalable=no,initial-scale=1,minimum-scale=1,maximum-scale=1,minimal-ui=true"/>
 
-  <!--https://developer.apple.com/library/safari/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html-->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="format-detection" content="telephone=no">
 
-  <!-- force webkit on 360 -->
   <meta name="renderer" content="webkit"/>
   <meta name="force-rendering" content="webkit"/>
-  <!-- force edge on IE -->
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
   <meta name="msapplication-tap-highlight" content="no">
 
-  <!-- force full screen on some browser -->
   <meta name="full-screen" content="yes"/>
   <meta name="x5-fullscreen" content="true"/>
   <meta name="360-fullscreen" content="true"/>
-
-  <!--fix fireball/issues/3568 -->
-  <!--<meta name="browsermode" content="application">-->
   <meta name="x5-page-mode" content="app">
-
-  <!--<link rel="apple-touch-icon" href=".png" />-->
-  <!--<link rel="apple-touch-icon-precomposed" href=".png" />-->
 
   <link rel="stylesheet" type="text/css" href="style.css"/>
 
 </head>
 <body>
-  <div id="GameDiv" cc_exact_fit_screen="true">
-      <div id="Cocos3dGameContainer">
-        <canvas id="GameCanvas" oncontextmenu="event.preventDefault()" tabindex="99"></canvas>
+  <div id="GameLoading" class="game-loading">
+    <div class="loading-bg"></div>
+    <div class="loading-panel">
+      <div class="loading-title">开心房地产</div>
+      <div class="loading-subtitle">正在加载游戏资源</div>
+      <div class="loading-bar">
+        <div id="GameLoadingFill" class="loading-fill"></div>
+        <div id="GameLoadingText" class="loading-text">0%</div>
       </div>
+      <div id="GameLoadingTip" class="loading-tip">请使用最新版 Google Chrome 打开</div>
     </div>
-  
+  </div>
 
-<!-- Polyfills bundle. -->
+  <div id="GameDiv" cc_exact_fit_screen="true">
+    <div id="Cocos3dGameContainer">
+      <canvas id="GameCanvas" oncontextmenu="event.preventDefault()" tabindex="99"></canvas>
+    </div>
+  </div>
 
-<script src="src/polyfills.bundle.js" charset="utf-8"> </script>
+  <script>
+    (function () {
+      var fill = document.getElementById('GameLoadingFill');
+      var text = document.getElementById('GameLoadingText');
+      var tip = document.getElementById('GameLoadingTip');
+      var loading = document.getElementById('GameLoading');
+      var progress = 0;
+      var timer = null;
+      var finished = false;
 
+      function setProgress(value) {
+        progress = Math.max(progress, Math.min(100, value));
+        if (fill) fill.style.width = progress + '%';
+        if (text) text.textContent = Math.floor(progress) + '%';
+      }
 
-<!-- SystemJS support. -->
-<script src="src/system.bundle.js" charset="utf-8"> </script>
+      function detectWebGL() {
+        try {
+          var canvas = document.createElement('canvas');
+          return !!(canvas.getContext('webgl2') || canvas.getContext('webgl') || canvas.getContext('experimental-webgl'));
+        } catch (e) {
+          return false;
+        }
+      }
 
-<!-- Import map -->
-<script src="src/import-map.json" type="systemjs-importmap" charset="utf-8"> </script>
+      function fail(message) {
+        finished = true;
+        if (timer) clearInterval(timer);
+        if (tip) tip.textContent = message;
+        if (text) text.textContent = '加载失败';
+      }
 
-<script>
-    System.import('./index.js').catch(function(err) { console.error(err); })
-</script>
+      function complete() {
+        if (finished) return;
+        finished = true;
+        if (timer) clearInterval(timer);
+        setProgress(100);
+        if (text) text.textContent = '100%';
+        setTimeout(function () {
+          if (loading) loading.className += ' loading-hidden';
+        }, 250);
+      }
+
+      if (!detectWebGL()) {
+        fail('当前浏览器或显卡未启用 WebGL，请使用最新版 Google Chrome 并开启硬件加速。');
+        return;
+      }
+
+      timer = setInterval(function () {
+        if (progress < 70) {
+          setProgress(progress + 2);
+        } else if (progress < 92) {
+          setProgress(progress + 0.5);
+        }
+      }, 120);
+
+      window.__KXFDC_LOADING__ = {
+        setProgress: setProgress,
+        complete: complete,
+        fail: fail
+      };
+
+      window.addEventListener('error', function (event) {
+        if (finished) return;
+        fail('游戏加载异常，请刷新页面重试。' + (event.message ? ' ' + event.message : ''));
+      });
+      window.addEventListener('unhandledrejection', function (event) {
+        if (finished) return;
+        var reason = event.reason;
+        fail('游戏加载异常，请刷新页面重试。' + (reason && reason.message ? ' ' + reason.message : ''));
+      });
+    }());
+  </script>
+
+  <script src="src/polyfills.bundle.js" charset="utf-8"> </script>
+  <script>window.__KXFDC_LOADING__ && window.__KXFDC_LOADING__.setProgress(18);</script>
+
+  <script src="src/system.bundle.js" charset="utf-8"> </script>
+  <script>window.__KXFDC_LOADING__ && window.__KXFDC_LOADING__.setProgress(32);</script>
+
+  <script src="src/import-map.json" type="systemjs-importmap" charset="utf-8"> </script>
+
+  <script>
+    System.import('./index.js').then(function () {
+      window.__KXFDC_LOADING__ && window.__KXFDC_LOADING__.setProgress(96);
+      setTimeout(function () {
+        var loading = window.__KXFDC_LOADING__;
+        var canvas = document.getElementById('GameCanvas');
+        if (loading && canvas && canvas.width > 0 && canvas.height > 0) {
+          loading.setProgress(98);
+        }
+      }, 1600);
+    }).catch(function(err) {
+      console.error(err);
+      window.__KXFDC_LOADING__ && window.__KXFDC_LOADING__.fail('游戏加载异常，请刷新页面重试。');
+    });
+  </script>
 
 </body>
 </html>
