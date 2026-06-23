@@ -28,15 +28,17 @@
 </head>
 <body>
   <div id="GameLoading" class="game-loading">
-    <div class="loading-bg"></div>
-    <div class="loading-panel">
-      <div class="loading-title">开心房地产</div>
-      <div class="loading-subtitle">正在加载游戏资源</div>
-      <div class="loading-bar">
-        <div id="GameLoadingFill" class="loading-fill"></div>
-        <div id="GameLoadingText" class="loading-text">0%</div>
+    <div id="GameLoadingStage" class="loading-stage">
+      <div class="loading-bg"></div>
+      <div class="loading-panel">
+        <div class="loading-title">开心房地产</div>
+        <div class="loading-subtitle">正在加载游戏资源</div>
+        <div class="loading-bar">
+          <div id="GameLoadingFill" class="loading-fill"></div>
+          <div id="GameLoadingText" class="loading-text">0%</div>
+        </div>
+        <div id="GameLoadingTip" class="loading-tip">请使用最新版 Google Chrome 打开</div>
       </div>
-      <div id="GameLoadingTip" class="loading-tip">请使用最新版 Google Chrome 打开</div>
     </div>
   </div>
 
@@ -52,9 +54,17 @@
       var text = document.getElementById('GameLoadingText');
       var tip = document.getElementById('GameLoadingTip');
       var loading = document.getElementById('GameLoading');
+      var stage = document.getElementById('GameLoadingStage');
       var progress = 0;
       var timer = null;
       var finished = false;
+
+      function fitLoadingStage() {
+        // Loading 使用 720x1280 设计舞台等比缩放，避免宽屏浏览器拉伸或裁切。
+        if (!stage) return;
+        var scale = Math.min(window.innerWidth / 720, window.innerHeight / 1280);
+        stage.style.transform = 'translate(-50%, -50%) scale(' + scale + ')';
+      }
 
       function setProgress(value) {
         progress = Math.max(progress, Math.min(100, value));
@@ -88,6 +98,10 @@
           if (loading) loading.className += ' loading-hidden';
         }, 250);
       }
+
+      fitLoadingStage();
+      window.addEventListener('resize', fitLoadingStage);
+      window.addEventListener('orientationchange', fitLoadingStage);
 
       if (!detectWebGL()) {
         fail('当前浏览器或显卡未启用 WebGL，请使用最新版 Google Chrome 并开启硬件加速。');
